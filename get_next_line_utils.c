@@ -6,7 +6,7 @@
 /*   By: cgeoffra <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/20 17:31:25 by cgeoffra          #+#    #+#             */
-/*   Updated: 2023/03/21 10:49:09 by cgeoffra         ###   ########.fr       */
+/*   Updated: 2023/04/11 12:43:38 by cgeoffra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ char	*ft_strjoin(char *s1, char *s2)
 
 	i = 0;
 	a = 0;
-	str = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
+	str = ft_calloc((ft_strlen(s1) + ft_strlen(s2) + 1), sizeof(char));
 	if (!str)
 		return (NULL);
 	if (s1)
@@ -74,7 +74,7 @@ void	*ft_calloc(size_t nmb, size_t size)
 	char	*str;
 
 	if (nmb == 0 || size == 0)
-		return (malloc(0));
+		return (NULL);
 	if (((nmb * size) / size) != nmb || ((nmb * size) / nmb) != size)
 		return (NULL);
 	str = malloc(size * nmb);

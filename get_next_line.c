@@ -6,7 +6,7 @@
 /*   By: cgeoffra <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/17 17:28:30 by cgeoffra          #+#    #+#             */
-/*   Updated: 2023/03/21 11:35:47 by cgeoffra         ###   ########.fr       */
+/*   Updated: 2023/04/11 12:52:40 by cgeoffra         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,18 @@ char	*get_next_line(int fd)
 		free(str);
 		str = NULL;
 	}
-	if (!str || ft_strlen(str) == 0)
+	if (!str || str[0] == '\0')
 		return (NULL);
 	s1 = ft_line(str);
-	str = ft_afterline(str);
+	if (ft_strchr(str, '\n') != NULL)
+		str = ft_afterline(str);
+	else
+		str[0] = '\0';
 	if (str[0] == '\0')
 	{
 		free(str);
 		str = NULL;
 	}
-	if (s1[0] == '\0')
-		free(s1);
 	return (s1);
 }
 
@@ -53,6 +54,7 @@ char	*ft_readline(int fd, char *str)
 		str = ft_strjoin(str, buff);
 		if (ft_strchr(buff, '\n') != NULL)
 			break ;
+		ft_bzero(buff, BUFFER_SIZE + 1);
 	}
 	if (ft_strlen(buff) != BUFFER_SIZE)
 		str = ft_strjoin(str, buff);
@@ -66,20 +68,21 @@ char	*ft_line(char *str)
 	int		i;
 
 	i = 0;
-	while (str[i] != '\n')
+	while (str[i] && str[i] != '\n')
 		i++;
-	i++;
-	s1 = malloc(sizeof(char) * i + 1);
+	if (str[i] == '\n')
+		i++;
+	s1 = ft_calloc((i + 2), sizeof(char));
 	if (!s1)
 		return (NULL);
 	i = 0;
-	while (str[i] != '\n')
+	while (str[i] && str[i] != '\n')
 	{
 		s1[i] = str[i];
 		i++;
 	}
-	s1[i++] = '\n';
-	s1[i] = '\0';
+	if (str[i] == '\n')
+		s1[i] = '\n';
 	return (s1);
 }
 
@@ -91,7 +94,8 @@ char	*ft_afterline(char *str)
 
 	i = 0;
 	a = 0;
-	while (str[i++] != '\n')
+	while (str[i] != '\n')
+		i++;
 	i++;
 	tmp = ft_calloc((ft_strlen(str) - i + 1), sizeof(char));
 	if (!tmp)
@@ -99,35 +103,28 @@ char	*ft_afterline(char *str)
 	while (str[i] != '\0')
 		tmp[a++] = str[i++];
 	free(str);
-	str = ft_calloc((ft_strlen(tmp) + 1), sizeof(char));
-	if (!str)
-		return (NULL);
-	i = 0;
-	while (tmp[i] != '\0')
-	{
-		str[i] = tmp[i];
-		i++;
-	}
+	str = ft_strdup(tmp);
 	free(tmp);
 	return (str);
 }
 
-int	main(void)
+char	*ft_strdup(char *s)
 {
-	int		fd;
-	int		i;
-	char	*line;
+	char	*str;
+	size_t	i;
 
-	i = 1;
-	fd = open("test.txt", O_RDONLY);
-	while (i < 25)
+	i = 0;
+	while (s[i])
+		i++;
+	str = ft_calloc(i + 1, sizeof(char));
+	if (str == NULL)
+		return (NULL);
+	i = 0;
+	while (s[i])
 	{
-		line = get_next_line(fd);
-		if (line == NULL)
-			break ;
-		printf("Lignes %d : %s", i, line);
-		free(line);
+		str[i] = s[i];
 		i++;
 	}
-	return (0);
+	str[i] = '\0';
+	return (str);
 }
